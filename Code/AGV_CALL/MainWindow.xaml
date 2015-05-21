@@ -1,0 +1,150 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:AGV_CALL"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="AGV_CALL.MainWindow"
+        Title="AGV叫料系统" WindowState="Maximized" FontSize="16" Icon="/AGV_CALL;component/Image/company_logo128.ico" Loaded="Window_Loaded" Closing="Window_Closing" Height="872" Width="1461">
+
+    <ScrollViewer x:Name="scrolls" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <StackPanel x:Name="numberedItemsStackPanel" Orientation="Horizontal" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <DockPanel  HorizontalAlignment="Left" x:Name="dockPanel1" VerticalAlignment="Top">
+                    <!-- 菜单栏停留在顶部 -->
+                    <Menu Height="32" x:Name="menu1" VerticalAlignment="Top" DockPanel.Dock ="Top" Foreground="Black" FontSize="16">
+                        <!-- 菜单栏背景颜色 -->
+                        <Menu.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFDFE5F2" Offset="0" />
+                                <GradientStop Color="#FFBCC6D7" Offset="1" />
+                            </LinearGradientBrush>
+                        </Menu.Background>
+                        <MenuItem Header="叫料系统设置(_S)" x:Name="MenuSystemSetting">
+                            <MenuItem Header="叫料系统管理(_M)"  Click="CallManage_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/AGV_CALL;component/Image/call_24.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="叫料盒地址设置(_D)"  Click="CallAddressSet_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/AGV_CALL;component/Image/setaddress_24.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="用户设置(_U)" x:Name="MenuSystemManage">
+                            <MenuItem Header="用户管理(_M)"  Click="UserManage_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/AGV_CALL;component/Image/user_24.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="通信设置(_C)" x:Name="MenuSettings">
+                            <MenuItem Header="串口设置(_S)" x:Name="COM" Click="COM_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/AGV_CALL;component/Image/com_24.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="个人设置(_P)">
+                            <MenuItem Header="密码设置(_W)" Click="PassWord_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/AGV_CALL;component/Image/password_24.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                        <MenuItem Header="帮助(_H)" >
+                            <MenuItem Header="查看帮助(_V)" Click="Help_Click">
+                                <MenuItem.Icon>
+                                    <Image Source="/AGV_CALL;component/Image/help_24.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+
+                    <!-- 将状态条停靠在底部 -->
+                    <StatusBar Height="30" DockPanel.Dock="Bottom" FontSize="16">
+                        <!--状态栏背景颜色-->
+                        <StatusBar.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FFDFE5F2" Offset="0" />
+                                <GradientStop Color="#FFBCC6D7" Offset="1" />
+                            </LinearGradientBrush>
+                        </StatusBar.Background>
+
+                        <StatusBarItem x:Name="lblTime" Content="初始化中···" Width="200"
+							DockPanel.Dock="Right" Foreground="Black"
+							HorizontalContentAlignment="Center"/>
+                        <StatusBarItem Content="当前时间:" DockPanel.Dock="Right" Foreground="Black"/>
+                        <StatusBarItem DockPanel.Dock="Right">
+                            <Image Source="/AGV_CALL;component/Image/clock_24.png"/>
+                        </StatusBarItem>
+                        <Separator DockPanel.Dock="Right" />
+                        <StatusBarItem Foreground="Black" Content="用户名："/>
+                        <StatusBarItem x:Name="lblusername" Content="初始化中...." Foreground="DarkCyan"/>
+                        <Separator Margin="100,0,0,0"/>
+                        <StatusBarItem>
+                            <Image x:Name="imgSystem"  Source="/AGV_CALL;component/Image/Light_Close_24.png" />
+                        </StatusBarItem>
+                        <StatusBarItem Foreground="Black" Content="系统状态："/>
+                        <StatusBarItem x:Name="lblsystemstate" Content="关闭" Foreground="Red" FontWeight="Black"/>
+
+                        <Separator Margin="100,0,0,0"/>
+                        <StatusBarItem>
+                            <Image x:Name="imgCOM"  Source="/AGV_CALL;component/Image/Light_Close_24.png" />
+                        </StatusBarItem>
+                        <StatusBarItem Foreground="Black" Content="串口状态："/>
+                        <StatusBarItem x:Name="lblcomstate" Content="关闭" Foreground="Red" FontWeight="Black"/>
+                    </StatusBar>
+
+                    <Grid ClipToBounds="True">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1440" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="81" />
+                            <RowDefinition Height="483" />
+                            <RowDefinition Height="210" />
+                        </Grid.RowDefinitions>
+
+                        <!-- 设置跑马显示标题 -->
+                        <l:Marquee x:Name="lbInfo" Content="无缺料信息..." Direction="Left" Foreground="Tomato" FontSize="30" VerticalAlignment="Center" Behavior="Scroll"  HorizontalAlignment="Right" Width="1440" />
+
+                        <!-- 表格数据 -->
+                        <DataGrid x:Name="dataGrid" ItemsSource="{Binding}" AutoGenerateColumns="False" IsReadOnly="True" CanUserSortColumns ="False" FontSize="28"  Grid.Row="1">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="序号" Width="80" Binding="{Binding iNO}" Foreground="Green" />
+                                <DataGridTextColumn Header="叫料时间" Width="300" Binding="{Binding dtTime}" Foreground="Red" />
+                                <DataGridTextColumn Header="工位号" Width="120" Binding="{Binding iStationNum}" />
+                                <DataGridTextColumn Header="物料编号" Width="160" Binding="{Binding iMaterialNum}" />
+                                <DataGridTextColumn Header="目标路线" Width="160" Binding="{Binding iLineNum}" />
+                                <DataGridTextColumn Header="缺料信息" Binding="{Binding sMaterialName}" Foreground="Orange" />
+                                <DataGridTemplateColumn Header="操作" Width="180">
+                                    <DataGridTemplateColumn.CellTemplate >
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Click="btnDeleteRecord_Click" CommandParameter="{Binding iNO}" FontSize="16" Margin="2,0">删除</Button>
+                                                <Button Click="btnUpRecord_Click" CommandParameter="{Binding iNO}" FontSize="16" Margin="2,0">上升↑</Button>
+                                                <Button Click="btnDownRecord_Click" CommandParameter="{Binding iNO}" FontSize="16" Margin="2,0">下降↓</Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Grid Grid.Row="2" Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="990" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Content="启动系统" x:Name="btnStart" Grid.Column="2" Width="120" Height="100" FontSize="25" Foreground="Green" FontWeight="UltraBold" Click="btnStart_Click" />
+                            <Button Content="关闭系统" x:Name="btnEnd" Grid.Column="3" Width="120" Height="100" FontSize="25" Foreground="Red" FontWeight="UltraBold" Click="btnEnd_Click" IsEnabled="False" />
+                            <Label Content="历史记录:" Grid.Column="0" Height="50" FontSize="26" HorizontalAlignment="Right" x:Name="label1" VerticalAlignment="Top" BorderBrush="#FFD76821" Foreground="#FFCB5D17" />
+                            <RichTextBox Grid.Row="2" Grid.Column="1" Height="176" HorizontalAlignment="Left" x:Name="rtbHistory" VerticalAlignment="Center" Width="977" IsReadOnly="True" BorderBrush="#FFD7661E" BorderThickness="2" VerticalScrollBarVisibility="Visible" UndoLimit="500" />
+                        </Grid>
+                    </Grid>
+                </DockPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
